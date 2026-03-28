@@ -1,4 +1,3 @@
-// plugins/http_request/plugin.json
 {
   "id": "http_request",
   "name": "HTTP Request Plugin",
