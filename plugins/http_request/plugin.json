@@ -1,8 +1,8 @@
 {
   "id": "http_request",
-  "name": "HTTP Request Plugin",
+  "name": "HTTP Request",
   "version": "1.0.1",
-  "description": "Adiciona blocos HTTP GET e POST para requisições web",
+  "description": "Adds HTTP GET and POST blocks for web requests",
   "blocks": [
     {
       "type": "http_get",
@@ -20,7 +20,7 @@
         },
         {
           "name": "target",
-          "label": "Armazenar resultado em",
+          "label": "Store result in",
           "type": "text",
           "default": "response",
           "required": true
@@ -54,13 +54,13 @@
           "name": "body",
           "label": "Body (JSON)",
           "type": "textarea",
-          "default": "{\"title\": \"Teste\", \"body\": \"Conteúdo\", \"userId\": 1}",
+          "default": "{\"title\": \"Test\", \"body\": \"Content\", \"userId\": 1}",
           "placeholder": "{ \"key\": \"value\" }",
           "span": "full"
         },
         {
           "name": "target",
-          "label": "Armazenar resultado em",
+          "label": "Store result in",
           "type": "text",
           "default": "response"
         },
