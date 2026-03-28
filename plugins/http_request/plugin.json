@@ -1,7 +1,7 @@
 {
   "id": "http_request",
   "name": "HTTP Request Plugin",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Adiciona blocos HTTP GET e POST para requisições web",
   "blocks": [
     {
