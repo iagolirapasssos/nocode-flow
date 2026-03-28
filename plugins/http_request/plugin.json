@@ -1,7 +1,7 @@
 {
   "id": "http_request",
   "name": "HTTP Request",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Adds HTTP GET and POST blocks for web requests",
   "blocks": [
     {
@@ -34,7 +34,7 @@
         }
       ],
       "allowChildren": false,
-      "exportCode": "`(async () => { const result = await fetch(${b.getValue('url')}, { headers: ${b.getValue('headers')} }).then(r => r.json()); window['${b.getValue('target')}'] = result; })();`"
+      "exportCode": "`(async () => { try { const result = await fetch(${b.getValue('url')}, { headers: ${b.getValue('headers')} }).then(r => r.json()); window['${b.getValue('target')}'] = result; } catch(e) { console.error('HTTP GET failed:', e); } })();`"
     },
     {
       "type": "http_post",
@@ -73,7 +73,7 @@
         }
       ],
       "allowChildren": false,
-      "exportCode": "`(async () => { const result = await fetch(${b.getValue('url')}, { method: 'POST', headers: ${b.getValue('headers')}, body: JSON.stringify(${b.getValue('body')}) }).then(r => r.json()); window['${b.getValue('target')}'] = result; })();`"
+      "exportCode": "`(async () => { try { const result = await fetch(${b.getValue('url')}, { method: 'POST', headers: ${b.getValue('headers')}, body: JSON.stringify(${b.getValue('body')}) }).then(r => r.json()); window['${b.getValue('target')}'] = result; } catch(e) { console.error('HTTP POST failed:', e); } })();`"
     }
   ]
 }
