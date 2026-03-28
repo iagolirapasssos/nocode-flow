@@ -1,0 +1,36 @@
+// plugins/http_request/plugin.json
+{
+  "id": "http_request",
+  "name": "HTTP Request Plugin",
+  "version": "1.0.0",
+  "description": "Adds HTTP request blocks (GET, POST) for fetching data from APIs.",
+  "blocks": [
+    {
+      "type": "http_get",
+      "name": "HTTP GET",
+      "icon": "🌐",
+      "color": "#44aaff",
+      "fields": [
+        { "name": "url", "label": "URL", "type": "text", "default": "'https://api.example.com/data'", "required": true, "span": "full" },
+        { "name": "target", "label": "Store result in", "type": "text", "default": "response", "required": true, "placeholder": "response" },
+        { "name": "headers", "label": "Headers (JSON)", "type": "textarea", "default": "{}", "placeholder": "{\"Authorization\": \"Bearer token\"}" }
+      ],
+      "allowChildren": false,
+      "exportCode": "`const ${b.getValue('target')} = await fetch(${b.getValue('url')}, { headers: ${b.getValue('headers')} }).then(r => r.json());`"
+    },
+    {
+      "type": "http_post",
+      "name": "HTTP POST",
+      "icon": "📤",
+      "color": "#ffaa44",
+      "fields": [
+        { "name": "url", "label": "URL", "type": "text", "default": "'https://api.example.com/submit'", "required": true, "span": "full" },
+        { "name": "body", "label": "Body", "type": "textarea", "default": "{}", "placeholder": "{ \"key\": \"value\" }", "span": "full" },
+        { "name": "target", "label": "Store result in", "type": "text", "default": "response", "placeholder": "response" },
+        { "name": "headers", "label": "Headers (JSON)", "type": "textarea", "default": "{}", "placeholder": "{\"Content-Type\": \"application/json\"}" }
+      ],
+      "allowChildren": false,
+      "exportCode": "`const ${b.getValue('target')} = await fetch(${b.getValue('url')}, { method: 'POST', headers: ${b.getValue('headers')}, body: JSON.stringify(${b.getValue('body')}) }).then(r => r.json());`"
+    }
+  ]
+}
