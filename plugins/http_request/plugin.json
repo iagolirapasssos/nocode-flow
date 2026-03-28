@@ -2,25 +2,25 @@
   "id": "http_request",
   "name": "HTTP Request Plugin",
   "version": "1.0.0",
-  "description": "Adds HTTP request blocks (GET, POST) for fetching data from APIs.",
+  "description": "Adiciona blocos HTTP GET e POST para requisições web",
   "blocks": [
     {
       "type": "http_get",
       "name": "HTTP GET",
-      "icon": "🌐",
+      "icon": "http",
       "color": "#44aaff",
       "fields": [
         {
           "name": "url",
           "label": "URL",
           "type": "text",
-          "default": "'https://api.example.com/data'",
+          "default": "https://jsonplaceholder.typicode.com/posts/1",
           "required": true,
           "span": "full"
         },
         {
           "name": "target",
-          "label": "Store result in",
+          "label": "Armazenar resultado em",
           "type": "text",
           "default": "response",
           "required": true
@@ -34,33 +34,33 @@
         }
       ],
       "allowChildren": false,
-      "exportCode": "`const ${b.getValue('target')} = await fetch(${b.getValue('url')}, { headers: ${b.getValue('headers')} }).then(r => r.json());`"
+      "exportCode": "`(async () => { window.${b.getValue('target')} = await fetch(${b.getValue('url')}, { headers: ${b.getValue('headers')} }).then(r => r.json()); })();`"
     },
     {
       "type": "http_post",
       "name": "HTTP POST",
-      "icon": "📤",
+      "icon": "http",
       "color": "#ffaa44",
       "fields": [
         {
           "name": "url",
           "label": "URL",
           "type": "text",
-          "default": "'https://api.example.com/submit'",
+          "default": "https://jsonplaceholder.typicode.com/posts",
           "required": true,
           "span": "full"
         },
         {
           "name": "body",
-          "label": "Body",
+          "label": "Body (JSON)",
           "type": "textarea",
-          "default": "{}",
+          "default": "{\"title\": \"Teste\", \"body\": \"Conteúdo\", \"userId\": 1}",
           "placeholder": "{ \"key\": \"value\" }",
           "span": "full"
         },
         {
           "name": "target",
-          "label": "Store result in",
+          "label": "Armazenar resultado em",
           "type": "text",
           "default": "response"
         },
@@ -68,12 +68,12 @@
           "name": "headers",
           "label": "Headers (JSON)",
           "type": "textarea",
-          "default": "{}",
+          "default": "{\"Content-Type\": \"application/json\"}",
           "placeholder": "{\"Content-Type\": \"application/json\"}"
         }
       ],
       "allowChildren": false,
-      "exportCode": "`const ${b.getValue('target')} = await fetch(${b.getValue('url')}, { method: 'POST', headers: ${b.getValue('headers')}, body: JSON.stringify(${b.getValue('body')}) }).then(r => r.json());`"
+      "exportCode": "`(async () => { window.${b.getValue('target')} = await fetch(${b.getValue('url')}, { method: 'POST', headers: ${b.getValue('headers')}, body: JSON.stringify(${b.getValue('body')}) }).then(r => r.json()); })();`"
     }
   ]
 }
