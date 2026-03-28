@@ -1,7 +1,7 @@
 {
   "id": "http_request",
   "name": "HTTP Request",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Adds HTTP GET and POST blocks for web requests",
   "blocks": [
     {
@@ -14,7 +14,7 @@
           "name": "url",
           "label": "URL",
           "type": "text",
-          "default": "'https://jsonplaceholder.typicode.com/posts/1'",
+          "default": "https://jsonplaceholder.typicode.com/posts/1",
           "required": true,
           "span": "full"
         },
@@ -34,7 +34,7 @@
         }
       ],
       "allowChildren": false,
-      "exportCode": "`(function() { const url = ${b.getValue('url')}; let headersObj = {}; try { headersObj = ${b.getValue('headers')}; } catch(e) { console.error('Invalid headers:', e); } fetch(url, { headers: headersObj }).then(r => r.json()).then(data => { window['${b.getValue('target')}'] = data; }).catch(e => console.error('HTTP GET failed:', e)); })();`"
+      "exportCode": "`(function() { const url = '${b.getValue('url')}'; let headersObj = {}; try { headersObj = ${b.getValue('headers')}; } catch(e) { console.error('Invalid headers:', e); } fetch(url, { headers: headersObj }).then(r => r.json()).then(data => { window['${b.getValue('target')}'] = data; }).catch(e => console.error('HTTP GET failed:', e)); })();`"
     },
     {
       "type": "http_post",
@@ -46,7 +46,7 @@
           "name": "url",
           "label": "URL",
           "type": "text",
-          "default": "'https://jsonplaceholder.typicode.com/posts'",
+          "default": "https://jsonplaceholder.typicode.com/posts",
           "required": true,
           "span": "full"
         },
@@ -73,7 +73,7 @@
         }
       ],
       "allowChildren": false,
-      "exportCode": "`(function() { const url = ${b.getValue('url')}; let headersObj = {}; let bodyObj = ${b.getValue('body')}; try { headersObj = ${b.getValue('headers')}; } catch(e) { console.error('Invalid headers:', e); } fetch(url, { method: 'POST', headers: headersObj, body: JSON.stringify(bodyObj) }).then(r => r.json()).then(data => { window['${b.getValue('target')}'] = data; }).catch(e => console.error('HTTP POST failed:', e)); })();`"
+      "exportCode": "`(function() { const url = '${b.getValue('url')}'; let headersObj = {}; let bodyObj = ${b.getValue('body')}; try { headersObj = ${b.getValue('headers')}; } catch(e) { console.error('Invalid headers:', e); } fetch(url, { method: 'POST', headers: headersObj, body: JSON.stringify(bodyObj) }).then(r => r.json()).then(data => { window['${b.getValue('target')}'] = data; }).catch(e => console.error('HTTP POST failed:', e)); })();`"
     }
   ]
 }
