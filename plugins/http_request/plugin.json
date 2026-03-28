@@ -1,6 +1,3 @@
-// Código corrigido para o plugin HTTP (dentro do plugin.json)
-// Substitua o exportCode dos blocos por estas versões corrigidas:
-
 {
   "type": "http_get",
   "name": "HTTP GET",
