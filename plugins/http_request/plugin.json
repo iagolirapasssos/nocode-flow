@@ -1,7 +1,7 @@
 {
   "id": "http_request",
   "name": "HTTP Request",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Complete HTTP client with GET, POST, PUT, PATCH, DELETE and response event blocks",
   "blocks": [
     {
@@ -31,26 +31,10 @@
           "type": "textarea",
           "default": "{}",
           "placeholder": "{\"Authorization\": \"Bearer token\"}"
-        },
-        {
-          "name": "onSuccess",
-          "label": "On Success (callback)",
-          "type": "text",
-          "default": "",
-          "placeholder": "function(data) { console.log(data); }",
-          "span": "full"
-        },
-        {
-          "name": "onError",
-          "label": "On Error (callback)",
-          "type": "text",
-          "default": "",
-          "placeholder": "function(err) { console.error(err); }",
-          "span": "full"
         }
       ],
       "allowChildren": false,
-      "exportCode": "`(function() { const url = '${b.getValue('url')}'; let headersObj = {}; try { headersObj = ${b.getValue('headers')}; } catch(e) { console.error('Invalid headers:', e); } const onSuccess = ${b.getValue('onSuccess') || 'null'}; const onError = ${b.getValue('onError') || 'null'}; fetch(url, { method: 'GET', headers: headersObj }).then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }).then(data => { window['${b.getValue('target')}'] = data; if (onSuccess && typeof onSuccess === 'function') onSuccess(data); }).catch(e => { if (onError && typeof onError === 'function') onError(e); else console.error('HTTP GET failed:', e); }); })();`"
+      "exportCode": "`(function() { const url = '${b.getValue('url')}'; let headersObj = {}; try { headersObj = ${b.getValue('headers')}; } catch(e) { console.error('Invalid headers:', e); } fetch(url, { method: 'GET', headers: headersObj }).then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }).then(data => { window['${b.getValue('target')}'] = data; }).catch(e => console.error('HTTP GET failed:', e)); })();`"
     },
     {
       "type": "http_post",
@@ -86,26 +70,10 @@
           "type": "textarea",
           "default": "{\"Content-Type\": \"application/json\"}",
           "placeholder": "{\"Content-Type\": \"application/json\"}"
-        },
-        {
-          "name": "onSuccess",
-          "label": "On Success (callback)",
-          "type": "text",
-          "default": "",
-          "placeholder": "function(data) { console.log(data); }",
-          "span": "full"
-        },
-        {
-          "name": "onError",
-          "label": "On Error (callback)",
-          "type": "text",
-          "default": "",
-          "placeholder": "function(err) { console.error(err); }",
-          "span": "full"
         }
       ],
       "allowChildren": false,
-      "exportCode": "`(function() { const url = '${b.getValue('url')}'; let headersObj = {}; let bodyObj = ${b.getValue('body')}; try { headersObj = ${b.getValue('headers')}; } catch(e) { console.error('Invalid headers:', e); } const onSuccess = ${b.getValue('onSuccess') || 'null'}; const onError = ${b.getValue('onError') || 'null'}; fetch(url, { method: 'POST', headers: headersObj, body: JSON.stringify(bodyObj) }).then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }).then(data => { window['${b.getValue('target')}'] = data; if (onSuccess && typeof onSuccess === 'function') onSuccess(data); }).catch(e => { if (onError && typeof onError === 'function') onError(e); else console.error('HTTP POST failed:', e); }); })();`"
+      "exportCode": "`(function() { const url = '${b.getValue('url')}'; let headersObj = {}; let bodyObj = ${b.getValue('body')}; try { headersObj = ${b.getValue('headers')}; } catch(e) { console.error('Invalid headers:', e); } fetch(url, { method: 'POST', headers: headersObj, body: JSON.stringify(bodyObj) }).then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }).then(data => { window['${b.getValue('target')}'] = data; }).catch(e => console.error('HTTP POST failed:', e)); })();`"
     },
     {
       "type": "http_put",
@@ -141,26 +109,10 @@
           "type": "textarea",
           "default": "{\"Content-Type\": \"application/json\"}",
           "placeholder": "{\"Content-Type\": \"application/json\"}"
-        },
-        {
-          "name": "onSuccess",
-          "label": "On Success (callback)",
-          "type": "text",
-          "default": "",
-          "placeholder": "function(data) { console.log(data); }",
-          "span": "full"
-        },
-        {
-          "name": "onError",
-          "label": "On Error (callback)",
-          "type": "text",
-          "default": "",
-          "placeholder": "function(err) { console.error(err); }",
-          "span": "full"
         }
       ],
       "allowChildren": false,
-      "exportCode": "`(function() { const url = '${b.getValue('url')}'; let headersObj = {}; let bodyObj = ${b.getValue('body')}; try { headersObj = ${b.getValue('headers')}; } catch(e) { console.error('Invalid headers:', e); } const onSuccess = ${b.getValue('onSuccess') || 'null'}; const onError = ${b.getValue('onError') || 'null'}; fetch(url, { method: 'PUT', headers: headersObj, body: JSON.stringify(bodyObj) }).then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }).then(data => { window['${b.getValue('target')}'] = data; if (onSuccess && typeof onSuccess === 'function') onSuccess(data); }).catch(e => { if (onError && typeof onError === 'function') onError(e); else console.error('HTTP PUT failed:', e); }); })();`"
+      "exportCode": "`(function() { const url = '${b.getValue('url')}'; let headersObj = {}; let bodyObj = ${b.getValue('body')}; try { headersObj = ${b.getValue('headers')}; } catch(e) { console.error('Invalid headers:', e); } fetch(url, { method: 'PUT', headers: headersObj, body: JSON.stringify(bodyObj) }).then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }).then(data => { window['${b.getValue('target')}'] = data; }).catch(e => console.error('HTTP PUT failed:', e)); })();`"
     },
     {
       "type": "http_patch",
@@ -196,26 +148,10 @@
           "type": "textarea",
           "default": "{\"Content-Type\": \"application/json\"}",
           "placeholder": "{\"Content-Type\": \"application/json\"}"
-        },
-        {
-          "name": "onSuccess",
-          "label": "On Success (callback)",
-          "type": "text",
-          "default": "",
-          "placeholder": "function(data) { console.log(data); }",
-          "span": "full"
-        },
-        {
-          "name": "onError",
-          "label": "On Error (callback)",
-          "type": "text",
-          "default": "",
-          "placeholder": "function(err) { console.error(err); }",
-          "span": "full"
         }
       ],
       "allowChildren": false,
-      "exportCode": "`(function() { const url = '${b.getValue('url')}'; let headersObj = {}; let bodyObj = ${b.getValue('body')}; try { headersObj = ${b.getValue('headers')}; } catch(e) { console.error('Invalid headers:', e); } const onSuccess = ${b.getValue('onSuccess') || 'null'}; const onError = ${b.getValue('onError') || 'null'}; fetch(url, { method: 'PATCH', headers: headersObj, body: JSON.stringify(bodyObj) }).then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }).then(data => { window['${b.getValue('target')}'] = data; if (onSuccess && typeof onSuccess === 'function') onSuccess(data); }).catch(e => { if (onError && typeof onError === 'function') onError(e); else console.error('HTTP PATCH failed:', e); }); })();`"
+      "exportCode": "`(function() { const url = '${b.getValue('url')}'; let headersObj = {}; let bodyObj = ${b.getValue('body')}; try { headersObj = ${b.getValue('headers')}; } catch(e) { console.error('Invalid headers:', e); } fetch(url, { method: 'PATCH', headers: headersObj, body: JSON.stringify(bodyObj) }).then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }).then(data => { window['${b.getValue('target')}'] = data; }).catch(e => console.error('HTTP PATCH failed:', e)); })();`"
     },
     {
       "type": "http_delete",
@@ -243,26 +179,10 @@
           "type": "textarea",
           "default": "{}",
           "placeholder": "{\"Authorization\": \"Bearer token\"}"
-        },
-        {
-          "name": "onSuccess",
-          "label": "On Success (callback)",
-          "type": "text",
-          "default": "",
-          "placeholder": "function(data) { console.log(data); }",
-          "span": "full"
-        },
-        {
-          "name": "onError",
-          "label": "On Error (callback)",
-          "type": "text",
-          "default": "",
-          "placeholder": "function(err) { console.error(err); }",
-          "span": "full"
         }
       ],
       "allowChildren": false,
-      "exportCode": "`(function() { const url = '${b.getValue('url')}'; let headersObj = {}; try { headersObj = ${b.getValue('headers')}; } catch(e) { console.error('Invalid headers:', e); } const onSuccess = ${b.getValue('onSuccess') || 'null'}; const onError = ${b.getValue('onError') || 'null'}; fetch(url, { method: 'DELETE', headers: headersObj }).then(r => { if (!r.ok && r.status !== 204) throw new Error('HTTP ' + r.status); return r.status === 204 ? {} : r.json(); }).then(data => { window['${b.getValue('target')}'] = data; if (onSuccess && typeof onSuccess === 'function') onSuccess(data); }).catch(e => { if (onError && typeof onError === 'function') onError(e); else console.error('HTTP DELETE failed:', e); }); })();`"
+      "exportCode": "`(function() { const url = '${b.getValue('url')}'; let headersObj = {}; try { headersObj = ${b.getValue('headers')}; } catch(e) { console.error('Invalid headers:', e); } fetch(url, { method: 'DELETE', headers: headersObj }).then(r => { if (!r.ok && r.status !== 204) throw new Error('HTTP ' + r.status); return r.status === 204 ? {} : r.json(); }).then(data => { window['${b.getValue('target')}'] = data; }).catch(e => console.error('HTTP DELETE failed:', e)); })();`"
     },
     {
       "type": "http_event_listener",
@@ -296,7 +216,7 @@
       ],
       "allowChildren": true,
       "extraChildZones": ["handlerBlocks"],
-      "exportCode": "`// HTTP Event Listener registered for ${b.getValue('eventType')}\nwindow.__httpEventListeners = window.__httpEventListeners || [];\nwindow.__httpEventListeners.push({\n  type: '${b.getValue('eventType')}',\n  pattern: '${b.getValue('urlPattern')}',\n  target: '${b.getValue('targetVar')}',\n  handler: function(data) {\n    window['${b.getValue('targetVar')}'] = data;\n    ${b.handlerBlocks?.map(c => `\n    // Execute child blocks\n    ${c.export?.javascript ? c.export.javascript(c) : ''}`).join('\n') || '// No handler code'}\n  }\n});`"
+      "exportCode": "`(function() { const eventType = '${b.getValue('eventType')}'; const urlPattern = '${b.getValue('urlPattern')}'; const targetVar = '${b.getValue('targetVar')}'; const handler = function(data) { window[targetVar] = data; }; window.__httpEventListeners = window.__httpEventListeners || []; window.__httpEventListeners.push({ type: eventType, pattern: urlPattern, target: targetVar, handler: handler }); })();`"
     }
   ]
 }
