@@ -1,7 +1,7 @@
 {
   "id": "crypto",
   "name": "Modern Cryptography",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "AES-256-GCM, RSA, SHA-256, JWT, and more cryptographic operations",
   "blocks": [
     {
@@ -15,7 +15,7 @@
         { "name": "target", "label": "Store result in", "type": "text", "default": "encrypted", "required": true }
       ],
       "allowChildren": false,
-      "exportCode": "`(function() { const data = ${b.getValue('data')}; const key = ${b.getValue('key')}; const encoder = new TextEncoder(); const keyData = encoder.encode(key.padEnd(32, '0').slice(0, 32)); crypto.subtle.importKey('raw', keyData, { name: 'AES-GCM' }, false, ['encrypt']).then(cryptoKey => { const iv = crypto.getRandomValues(new Uint8Array(12)); crypto.subtle.encrypt({ name: 'AES-GCM', iv: iv }, cryptoKey, encoder.encode(data)).then(encrypted => { const result = btoa(String.fromCharCode(...new Uint8Array(iv)) + '|' + String.fromCharCode(...new Uint8Array(encrypted))); window['${b.getValue('target')}'] = result; }).catch(e => console.error('Encryption failed:', e)); }).catch(e => console.error('Key import failed:', e)); })();`"
+      "exportCode": "`(async function() { const data = ${b.getValue('data')}; const key = ${b.getValue('key')}; const encoder = new TextEncoder(); const keyData = encoder.encode(key.padEnd(32, '0').slice(0, 32)); const cryptoKey = await crypto.subtle.importKey('raw', keyData, { name: 'AES-GCM' }, false, ['encrypt']); const iv = crypto.getRandomValues(new Uint8Array(12)); const encrypted = await crypto.subtle.encrypt({ name: 'AES-GCM', iv: iv }, cryptoKey, encoder.encode(data)); const ivBase64 = btoa(String.fromCharCode.apply(null, iv)); const encryptedBase64 = btoa(String.fromCharCode.apply(null, new Uint8Array(encrypted))); window['${b.getValue('target')}'] = ivBase64 + ':' + encryptedBase64; })();`"
     },
     {
       "type": "crypto_aes_decrypt",
@@ -28,7 +28,7 @@
         { "name": "target", "label": "Store result in", "type": "text", "default": "decrypted", "required": true }
       ],
       "allowChildren": false,
-      "exportCode": "`(function() { const encrypted = ${b.getValue('encrypted')}; const key = ${b.getValue('key')}; const decoder = new TextDecoder(); const encoder = new TextEncoder(); const keyData = encoder.encode(key.padEnd(32, '0').slice(0, 32)); const parts = atob(encrypted).split('|'); const iv = new Uint8Array(parts[0].split('').map(c => c.charCodeAt(0))); const data = new Uint8Array(parts[1].split('').map(c => c.charCodeAt(0))); crypto.subtle.importKey('raw', keyData, { name: 'AES-GCM' }, false, ['decrypt']).then(cryptoKey => { crypto.subtle.decrypt({ name: 'AES-GCM', iv: iv }, cryptoKey, data).then(decrypted => { window['${b.getValue('target')}'] = decoder.decode(decrypted); }).catch(e => console.error('Decryption failed:', e)); }).catch(e => console.error('Key import failed:', e)); })();`"
+      "exportCode": "`(async function() { const encrypted = ${b.getValue('encrypted')}; const key = ${b.getValue('key')}; const parts = encrypted.split(':'); if (parts.length !== 2) { console.error('Invalid encrypted format'); return; } const iv = Uint8Array.from(atob(parts[0]), c => c.charCodeAt(0)); const data = Uint8Array.from(atob(parts[1]), c => c.charCodeAt(0)); const encoder = new TextEncoder(); const decoder = new TextDecoder(); const keyData = encoder.encode(key.padEnd(32, '0').slice(0, 32)); const cryptoKey = await crypto.subtle.importKey('raw', keyData, { name: 'AES-GCM' }, false, ['decrypt']); const decrypted = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: iv }, cryptoKey, data); window['${b.getValue('target')}'] = decoder.decode(decrypted); })();`"
     },
     {
       "type": "crypto_sha256",
@@ -40,7 +40,7 @@
         { "name": "target", "label": "Store hash in", "type": "text", "default": "hash", "required": true }
       ],
       "allowChildren": false,
-      "exportCode": "`(function() { const data = ${b.getValue('data')}; const encoder = new TextEncoder(); crypto.subtle.digest('SHA-256', encoder.encode(data)).then(hash => { const hashArray = Array.from(new Uint8Array(hash)); const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join(''); window['${b.getValue('target')}'] = hashHex; }).catch(e => console.error('Hashing failed:', e)); })();`"
+      "exportCode": "`(async function() { const data = ${b.getValue('data')}; const encoder = new TextEncoder(); const hashBuffer = await crypto.subtle.digest('SHA-256', encoder.encode(data)); const hashArray = Array.from(new Uint8Array(hashBuffer)); const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join(''); window['${b.getValue('target')}'] = hashHex; })();`"
     },
     {
       "type": "crypto_base64_encode",
@@ -77,7 +77,7 @@
         { "name": "target", "label": "Store JWT in", "type": "text", "default": "jwt", "required": true }
       ],
       "allowChildren": false,
-      "exportCode": "`(function() { const payload = ${b.getValue('payload')}; const secret = ${b.getValue('secret')}; const header = { alg: 'HS256', typ: 'JWT' }; const encodedHeader = btoa(JSON.stringify(header)); const encodedPayload = btoa(JSON.stringify(payload)); const signatureInput = encodedHeader + '.' + encodedPayload; const encoder = new TextEncoder(); crypto.subtle.importKey('raw', encoder.encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']).then(key => { crypto.subtle.sign('HMAC', key, encoder.encode(signatureInput)).then(signature => { const signatureBase64 = btoa(String.fromCharCode(...new Uint8Array(signature))); const jwt = signatureInput + '.' + signatureBase64; window['${b.getValue('target')}'] = jwt; }); }); })();`"
+      "exportCode": "`(async function() { const payload = ${b.getValue('payload')}; const secret = ${b.getValue('secret')}; const header = { alg: 'HS256', typ: 'JWT' }; const encodedHeader = btoa(JSON.stringify(header)); const encodedPayload = btoa(JSON.stringify(payload)); const signatureInput = encodedHeader + '.' + encodedPayload; const encoder = new TextEncoder(); const key = await crypto.subtle.importKey('raw', encoder.encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']); const signature = await crypto.subtle.sign('HMAC', key, encoder.encode(signatureInput)); const signatureBase64 = btoa(String.fromCharCode.apply(null, new Uint8Array(signature))); const jwt = signatureInput + '.' + signatureBase64; window['${b.getValue('target')}'] = jwt; })();`"
     },
     {
       "type": "crypto_jwt_verify",
@@ -90,7 +90,7 @@
         { "name": "target", "label": "Store payload in", "type": "text", "default": "payload", "required": true }
       ],
       "allowChildren": false,
-      "exportCode": "`(function() { const jwt = ${b.getValue('jwt')}; const secret = ${b.getValue('secret')}; const parts = jwt.split('.'); if (parts.length !== 3) { console.error('Invalid JWT'); return; } const signatureInput = parts[0] + '.' + parts[1]; const signature = parts[2]; const encoder = new TextEncoder(); crypto.subtle.importKey('raw', encoder.encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['verify']).then(key => { const signatureBytes = Uint8Array.from(atob(signature), c => c.charCodeAt(0)); crypto.subtle.verify('HMAC', key, signatureBytes, encoder.encode(signatureInput)).then(isValid => { if (isValid) { const payload = JSON.parse(atob(parts[1])); window['${b.getValue('target')}'] = payload; } else { console.error('Invalid signature'); window['${b.getValue('target')}'] = null; } }); }); })();`"
+      "exportCode": "`(async function() { const jwt = ${b.getValue('jwt')}; const secret = ${b.getValue('secret')}; const parts = jwt.split('.'); if (parts.length !== 3) { console.error('Invalid JWT'); return; } const signatureInput = parts[0] + '.' + parts[1]; const signature = parts[2]; const encoder = new TextEncoder(); const key = await crypto.subtle.importKey('raw', encoder.encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['verify']); const signatureBytes = Uint8Array.from(atob(signature), c => c.charCodeAt(0)); const isValid = await crypto.subtle.verify('HMAC', key, signatureBytes, encoder.encode(signatureInput)); if (isValid) { const payload = JSON.parse(atob(parts[1])); window['${b.getValue('target')}'] = payload; } else { console.error('Invalid signature'); window['${b.getValue('target')}'] = null; } })();`"
     },
     {
       "type": "crypto_random",
@@ -103,7 +103,7 @@
         { "name": "target", "label": "Store result in", "type": "text", "default": "random", "required": true }
       ],
       "allowChildren": false,
-      "exportCode": "`(function() { const type = '${b.getValue('type')}'; const length = parseInt(${b.getValue('length')}) || 16; let result; if (type === 'uuid') { result = crypto.randomUUID(); } else if (type === 'bytes') { const bytes = crypto.getRandomValues(new Uint8Array(length)); result = Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join(''); } else if (type === 'number') { result = crypto.getRandomValues(new Uint32Array(1))[0] / 4294967295; } else { const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'; const array = crypto.getRandomValues(new Uint8Array(length)); result = Array.from(array).map(b => chars[b % chars.length]).join(''); } window['${b.getValue('target')}'] = result; })();`"
+      "exportCode": "`(function() { const type = '${b.getValue('type')}'; const length = parseInt(${b.getValue('length')}) || 16; let result = ''; if (type === 'uuid') { result = crypto.randomUUID(); } else if (type === 'bytes') { const bytes = crypto.getRandomValues(new Uint8Array(length)); result = Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join(''); } else if (type === 'number') { result = crypto.getRandomValues(new Uint32Array(1))[0] / 4294967295; } else { const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'; const array = crypto.getRandomValues(new Uint8Array(length)); result = Array.from(array).map(b => chars[b % chars.length]).join(''); } window['${b.getValue('target')}'] = result; })();`"
     }
   ]
 }

@@ -1,7 +1,7 @@
 {
   "id": "chatbot",
   "name": "AI Chatbot",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Beautiful chat interface with OpenAI integration",
   "blocks": [
     {
@@ -17,7 +17,7 @@
         { "name": "target", "label": "Store last response in", "type": "text", "default": "lastResponse", "span": "full" }
       ],
       "allowChildren": false,
-      "exportCode": "`(function() { const config = { title: ${b.getValue('title')}, apiKey: ${b.getValue('apiKey')}, model: '${b.getValue('model')}', systemPrompt: ${b.getValue('systemPrompt')}, target: '${b.getValue('target')}' }; if(window.__createChatbot) { window.__createChatbot(config); } else { console.error('Chatbot UI not loaded'); } })();`"
+      "exportCode": "`(function() { const config = { title: ${b.getValue('title')}, apiKey: ${b.getValue('apiKey')}, model: '${b.getValue('model')}', systemPrompt: ${b.getValue('systemPrompt')}, target: '${b.getValue('target')}' }; if(typeof window.__createChatbot === 'function') { window.__createChatbot(config); } else { console.error('Chatbot UI not loaded'); } })();`"
     },
     {
       "type": "chatbot_send",
@@ -29,7 +29,7 @@
         { "name": "target", "label": "Store response in", "type": "text", "default": "response", "required": true }
       ],
       "allowChildren": false,
-      "exportCode": "`(function() { const message = ${b.getValue('message')}; const target = '${b.getValue('target')}'; if(window.__sendChatMessage) { window.__sendChatMessage(message, target); } else { console.error('Chatbot not initialized'); } })();`"
+      "exportCode": "`(function() { const message = ${b.getValue('message')}; const target = '${b.getValue('target')}'; if(typeof window.__sendChatMessage === 'function') { window.__sendChatMessage(message, target); } else { console.error('Chatbot not initialized'); } })();`"
     },
     {
       "type": "chatbot_clear",
@@ -38,7 +38,7 @@
       "color": "#ff8888",
       "fields": [],
       "allowChildren": false,
-      "exportCode": "`(function() { if(window.__clearChat) { window.__clearChat(); } })();`"
+      "exportCode": "`(function() { if(typeof window.__clearChat === 'function') { window.__clearChat(); } })();`"
     }
   ]
 }
