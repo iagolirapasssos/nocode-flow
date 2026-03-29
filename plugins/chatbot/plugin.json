@@ -1,0 +1,44 @@
+{
+  "id": "chatbot",
+  "name": "AI Chatbot",
+  "version": "1.0.0",
+  "description": "Beautiful chat interface with OpenAI integration",
+  "blocks": [
+    {
+      "type": "chatbot_ui",
+      "name": "Chatbot UI",
+      "icon": "chat",
+      "color": "#44aaff",
+      "fields": [
+        { "name": "title", "label": "Chat Title", "type": "text", "default": "AI Assistant", "span": "full" },
+        { "name": "apiKey", "label": "OpenAI API Key", "type": "textarea", "default": "", "placeholder": "sk-...", "span": "full" },
+        { "name": "model", "label": "Model", "type": "select", "options": ["gpt-3.5-turbo", "gpt-4", "gpt-4-turbo-preview"], "default": "gpt-3.5-turbo", "span": "full" },
+        { "name": "systemPrompt", "label": "System Prompt", "type": "textarea", "default": "You are a helpful assistant.", "span": "full" },
+        { "name": "target", "label": "Store last response in", "type": "text", "default": "lastResponse", "span": "full" }
+      ],
+      "allowChildren": false,
+      "exportCode": "`(function() { const config = { title: ${b.getValue('title')}, apiKey: ${b.getValue('apiKey')}, model: '${b.getValue('model')}', systemPrompt: ${b.getValue('systemPrompt')}, target: '${b.getValue('target')}' }; if(window.__createChatbot) { window.__createChatbot(config); } else { console.error('Chatbot UI not loaded'); } })();`"
+    },
+    {
+      "type": "chatbot_send",
+      "name": "Send Message",
+      "icon": "send",
+      "color": "#88ff88",
+      "fields": [
+        { "name": "message", "label": "Message", "type": "textarea", "default": "Hello!", "required": true, "span": "full" },
+        { "name": "target", "label": "Store response in", "type": "text", "default": "response", "required": true }
+      ],
+      "allowChildren": false,
+      "exportCode": "`(function() { const message = ${b.getValue('message')}; const target = '${b.getValue('target')}'; if(window.__sendChatMessage) { window.__sendChatMessage(message, target); } else { console.error('Chatbot not initialized'); } })();`"
+    },
+    {
+      "type": "chatbot_clear",
+      "name": "Clear Chat",
+      "icon": "delete_sweep",
+      "color": "#ff8888",
+      "fields": [],
+      "allowChildren": false,
+      "exportCode": "`(function() { if(window.__clearChat) { window.__clearChat(); } })();`"
+    }
+  ]
+}
