@@ -1,8 +1,8 @@
 {
   "id": "http_request",
   "name": "HTTP Request",
-  "version": "2.0.0",
-  "description": "Complete HTTP client with GET, POST, PUT, PATCH, DELETE and response events",
+  "version": "2.0.1",
+  "description": "Complete HTTP client with GET, POST, PUT, PATCH, DELETE and response event blocks",
   "blocks": [
     {
       "type": "http_get",
@@ -265,7 +265,7 @@
       "exportCode": "`(function() { const url = '${b.getValue('url')}'; let headersObj = {}; try { headersObj = ${b.getValue('headers')}; } catch(e) { console.error('Invalid headers:', e); } const onSuccess = ${b.getValue('onSuccess') || 'null'}; const onError = ${b.getValue('onError') || 'null'}; fetch(url, { method: 'DELETE', headers: headersObj }).then(r => { if (!r.ok && r.status !== 204) throw new Error('HTTP ' + r.status); return r.status === 204 ? {} : r.json(); }).then(data => { window['${b.getValue('target')}'] = data; if (onSuccess && typeof onSuccess === 'function') onSuccess(data); }).catch(e => { if (onError && typeof onError === 'function') onError(e); else console.error('HTTP DELETE failed:', e); }); })();`"
     },
     {
-      "type": "http_event",
+      "type": "http_event_listener",
       "name": "HTTP Event Listener",
       "icon": "event",
       "color": "#aa88ff",
@@ -274,28 +274,29 @@
           "name": "eventType",
           "label": "Event Type",
           "type": "select",
-          "options": ["success", "error", "complete"],
-          "default": "success",
+          "options": ["onRequestStart", "onResponse", "onError", "onComplete"],
+          "default": "onResponse",
           "span": "full"
         },
         {
-          "name": "callback",
-          "label": "Callback Function",
-          "type": "textarea",
-          "default": "function(response) { console.log('Response:', response); }",
-          "placeholder": "function(data) { /* handle response */ }",
+          "name": "urlPattern",
+          "label": "URL Pattern (optional)",
+          "type": "text",
+          "default": "*",
+          "placeholder": "* or /api/users/*",
           "span": "full"
         },
         {
           "name": "targetVar",
           "label": "Store response in",
           "type": "text",
-          "default": "httpResult",
-          "placeholder": "result"
+          "default": "eventData",
+          "placeholder": "eventData"
         }
       ],
-      "allowChildren": false,
-      "exportCode": "`(function() { const eventType = '${b.getValue('eventType')}'; const callback = ${b.getValue('callback')}; const targetVar = '${b.getValue('targetVar')}'; window.__httpEvents = window.__httpEvents || []; window.__httpEvents.push({ type: eventType, callback: callback, target: targetVar }); if (eventType === 'complete') { console.log('HTTP Event listener registered for:', eventType); } })();`"
+      "allowChildren": true,
+      "extraChildZones": ["handlerBlocks"],
+      "exportCode": "`// HTTP Event Listener registered for ${b.getValue('eventType')}\nwindow.__httpEventListeners = window.__httpEventListeners || [];\nwindow.__httpEventListeners.push({\n  type: '${b.getValue('eventType')}',\n  pattern: '${b.getValue('urlPattern')}',\n  target: '${b.getValue('targetVar')}',\n  handler: function(data) {\n    window['${b.getValue('targetVar')}'] = data;\n    ${b.handlerBlocks?.map(c => `\n    // Execute child blocks\n    ${c.export?.javascript ? c.export.javascript(c) : ''}`).join('\n') || '// No handler code'}\n  }\n});`"
     }
   ]
 }
