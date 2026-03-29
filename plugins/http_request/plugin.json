@@ -1,13 +1,13 @@
 {
   "id": "http_request",
   "name": "HTTP Request",
-  "version": "1.0.4",
-  "description": "Adds HTTP GET and POST blocks for web requests",
+  "version": "2.0.0",
+  "description": "Complete HTTP client with GET, POST, PUT, PATCH, DELETE and response events",
   "blocks": [
     {
       "type": "http_get",
       "name": "HTTP GET",
-      "icon": "http",
+      "icon": "download",
       "color": "#44aaff",
       "fields": [
         {
@@ -31,15 +31,31 @@
           "type": "textarea",
           "default": "{}",
           "placeholder": "{\"Authorization\": \"Bearer token\"}"
+        },
+        {
+          "name": "onSuccess",
+          "label": "On Success (callback)",
+          "type": "text",
+          "default": "",
+          "placeholder": "function(data) { console.log(data); }",
+          "span": "full"
+        },
+        {
+          "name": "onError",
+          "label": "On Error (callback)",
+          "type": "text",
+          "default": "",
+          "placeholder": "function(err) { console.error(err); }",
+          "span": "full"
         }
       ],
       "allowChildren": false,
-      "exportCode": "`(function() { const url = '${b.getValue('url')}'; let headersObj = {}; try { headersObj = ${b.getValue('headers')}; } catch(e) { console.error('Invalid headers:', e); } fetch(url, { headers: headersObj }).then(r => r.json()).then(data => { window['${b.getValue('target')}'] = data; }).catch(e => console.error('HTTP GET failed:', e)); })();`"
+      "exportCode": "`(function() { const url = '${b.getValue('url')}'; let headersObj = {}; try { headersObj = ${b.getValue('headers')}; } catch(e) { console.error('Invalid headers:', e); } const onSuccess = ${b.getValue('onSuccess') || 'null'}; const onError = ${b.getValue('onError') || 'null'}; fetch(url, { method: 'GET', headers: headersObj }).then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }).then(data => { window['${b.getValue('target')}'] = data; if (onSuccess && typeof onSuccess === 'function') onSuccess(data); }).catch(e => { if (onError && typeof onError === 'function') onError(e); else console.error('HTTP GET failed:', e); }); })();`"
     },
     {
       "type": "http_post",
       "name": "HTTP POST",
-      "icon": "http",
+      "icon": "upload",
       "color": "#ffaa44",
       "fields": [
         {
@@ -70,10 +86,216 @@
           "type": "textarea",
           "default": "{\"Content-Type\": \"application/json\"}",
           "placeholder": "{\"Content-Type\": \"application/json\"}"
+        },
+        {
+          "name": "onSuccess",
+          "label": "On Success (callback)",
+          "type": "text",
+          "default": "",
+          "placeholder": "function(data) { console.log(data); }",
+          "span": "full"
+        },
+        {
+          "name": "onError",
+          "label": "On Error (callback)",
+          "type": "text",
+          "default": "",
+          "placeholder": "function(err) { console.error(err); }",
+          "span": "full"
         }
       ],
       "allowChildren": false,
-      "exportCode": "`(function() { const url = '${b.getValue('url')}'; let headersObj = {}; let bodyObj = ${b.getValue('body')}; try { headersObj = ${b.getValue('headers')}; } catch(e) { console.error('Invalid headers:', e); } fetch(url, { method: 'POST', headers: headersObj, body: JSON.stringify(bodyObj) }).then(r => r.json()).then(data => { window['${b.getValue('target')}'] = data; }).catch(e => console.error('HTTP POST failed:', e)); })();`"
+      "exportCode": "`(function() { const url = '${b.getValue('url')}'; let headersObj = {}; let bodyObj = ${b.getValue('body')}; try { headersObj = ${b.getValue('headers')}; } catch(e) { console.error('Invalid headers:', e); } const onSuccess = ${b.getValue('onSuccess') || 'null'}; const onError = ${b.getValue('onError') || 'null'}; fetch(url, { method: 'POST', headers: headersObj, body: JSON.stringify(bodyObj) }).then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }).then(data => { window['${b.getValue('target')}'] = data; if (onSuccess && typeof onSuccess === 'function') onSuccess(data); }).catch(e => { if (onError && typeof onError === 'function') onError(e); else console.error('HTTP POST failed:', e); }); })();`"
+    },
+    {
+      "type": "http_put",
+      "name": "HTTP PUT",
+      "icon": "edit",
+      "color": "#44ffaa",
+      "fields": [
+        {
+          "name": "url",
+          "label": "URL",
+          "type": "text",
+          "default": "https://jsonplaceholder.typicode.com/posts/1",
+          "required": true,
+          "span": "full"
+        },
+        {
+          "name": "body",
+          "label": "Body (JSON)",
+          "type": "textarea",
+          "default": "{\"id\": 1, \"title\": \"Updated\", \"body\": \"New content\", \"userId\": 1}",
+          "placeholder": "{\"key\": \"value\"}",
+          "span": "full"
+        },
+        {
+          "name": "target",
+          "label": "Store result in",
+          "type": "text",
+          "default": "response"
+        },
+        {
+          "name": "headers",
+          "label": "Headers (JSON)",
+          "type": "textarea",
+          "default": "{\"Content-Type\": \"application/json\"}",
+          "placeholder": "{\"Content-Type\": \"application/json\"}"
+        },
+        {
+          "name": "onSuccess",
+          "label": "On Success (callback)",
+          "type": "text",
+          "default": "",
+          "placeholder": "function(data) { console.log(data); }",
+          "span": "full"
+        },
+        {
+          "name": "onError",
+          "label": "On Error (callback)",
+          "type": "text",
+          "default": "",
+          "placeholder": "function(err) { console.error(err); }",
+          "span": "full"
+        }
+      ],
+      "allowChildren": false,
+      "exportCode": "`(function() { const url = '${b.getValue('url')}'; let headersObj = {}; let bodyObj = ${b.getValue('body')}; try { headersObj = ${b.getValue('headers')}; } catch(e) { console.error('Invalid headers:', e); } const onSuccess = ${b.getValue('onSuccess') || 'null'}; const onError = ${b.getValue('onError') || 'null'}; fetch(url, { method: 'PUT', headers: headersObj, body: JSON.stringify(bodyObj) }).then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }).then(data => { window['${b.getValue('target')}'] = data; if (onSuccess && typeof onSuccess === 'function') onSuccess(data); }).catch(e => { if (onError && typeof onError === 'function') onError(e); else console.error('HTTP PUT failed:', e); }); })();`"
+    },
+    {
+      "type": "http_patch",
+      "name": "HTTP PATCH",
+      "icon": "build",
+      "color": "#ff8844",
+      "fields": [
+        {
+          "name": "url",
+          "label": "URL",
+          "type": "text",
+          "default": "https://jsonplaceholder.typicode.com/posts/1",
+          "required": true,
+          "span": "full"
+        },
+        {
+          "name": "body",
+          "label": "Body (JSON)",
+          "type": "textarea",
+          "default": "{\"title\": \"Patched Title\"}",
+          "placeholder": "{\"key\": \"value\"}",
+          "span": "full"
+        },
+        {
+          "name": "target",
+          "label": "Store result in",
+          "type": "text",
+          "default": "response"
+        },
+        {
+          "name": "headers",
+          "label": "Headers (JSON)",
+          "type": "textarea",
+          "default": "{\"Content-Type\": \"application/json\"}",
+          "placeholder": "{\"Content-Type\": \"application/json\"}"
+        },
+        {
+          "name": "onSuccess",
+          "label": "On Success (callback)",
+          "type": "text",
+          "default": "",
+          "placeholder": "function(data) { console.log(data); }",
+          "span": "full"
+        },
+        {
+          "name": "onError",
+          "label": "On Error (callback)",
+          "type": "text",
+          "default": "",
+          "placeholder": "function(err) { console.error(err); }",
+          "span": "full"
+        }
+      ],
+      "allowChildren": false,
+      "exportCode": "`(function() { const url = '${b.getValue('url')}'; let headersObj = {}; let bodyObj = ${b.getValue('body')}; try { headersObj = ${b.getValue('headers')}; } catch(e) { console.error('Invalid headers:', e); } const onSuccess = ${b.getValue('onSuccess') || 'null'}; const onError = ${b.getValue('onError') || 'null'}; fetch(url, { method: 'PATCH', headers: headersObj, body: JSON.stringify(bodyObj) }).then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }).then(data => { window['${b.getValue('target')}'] = data; if (onSuccess && typeof onSuccess === 'function') onSuccess(data); }).catch(e => { if (onError && typeof onError === 'function') onError(e); else console.error('HTTP PATCH failed:', e); }); })();`"
+    },
+    {
+      "type": "http_delete",
+      "name": "HTTP DELETE",
+      "icon": "delete",
+      "color": "#ff4444",
+      "fields": [
+        {
+          "name": "url",
+          "label": "URL",
+          "type": "text",
+          "default": "https://jsonplaceholder.typicode.com/posts/1",
+          "required": true,
+          "span": "full"
+        },
+        {
+          "name": "target",
+          "label": "Store result in",
+          "type": "text",
+          "default": "response"
+        },
+        {
+          "name": "headers",
+          "label": "Headers (JSON)",
+          "type": "textarea",
+          "default": "{}",
+          "placeholder": "{\"Authorization\": \"Bearer token\"}"
+        },
+        {
+          "name": "onSuccess",
+          "label": "On Success (callback)",
+          "type": "text",
+          "default": "",
+          "placeholder": "function(data) { console.log(data); }",
+          "span": "full"
+        },
+        {
+          "name": "onError",
+          "label": "On Error (callback)",
+          "type": "text",
+          "default": "",
+          "placeholder": "function(err) { console.error(err); }",
+          "span": "full"
+        }
+      ],
+      "allowChildren": false,
+      "exportCode": "`(function() { const url = '${b.getValue('url')}'; let headersObj = {}; try { headersObj = ${b.getValue('headers')}; } catch(e) { console.error('Invalid headers:', e); } const onSuccess = ${b.getValue('onSuccess') || 'null'}; const onError = ${b.getValue('onError') || 'null'}; fetch(url, { method: 'DELETE', headers: headersObj }).then(r => { if (!r.ok && r.status !== 204) throw new Error('HTTP ' + r.status); return r.status === 204 ? {} : r.json(); }).then(data => { window['${b.getValue('target')}'] = data; if (onSuccess && typeof onSuccess === 'function') onSuccess(data); }).catch(e => { if (onError && typeof onError === 'function') onError(e); else console.error('HTTP DELETE failed:', e); }); })();`"
+    },
+    {
+      "type": "http_event",
+      "name": "HTTP Event Listener",
+      "icon": "event",
+      "color": "#aa88ff",
+      "fields": [
+        {
+          "name": "eventType",
+          "label": "Event Type",
+          "type": "select",
+          "options": ["success", "error", "complete"],
+          "default": "success",
+          "span": "full"
+        },
+        {
+          "name": "callback",
+          "label": "Callback Function",
+          "type": "textarea",
+          "default": "function(response) { console.log('Response:', response); }",
+          "placeholder": "function(data) { /* handle response */ }",
+          "span": "full"
+        },
+        {
+          "name": "targetVar",
+          "label": "Store response in",
+          "type": "text",
+          "default": "httpResult",
+          "placeholder": "result"
+        }
+      ],
+      "allowChildren": false,
+      "exportCode": "`(function() { const eventType = '${b.getValue('eventType')}'; const callback = ${b.getValue('callback')}; const targetVar = '${b.getValue('targetVar')}'; window.__httpEvents = window.__httpEvents || []; window.__httpEvents.push({ type: eventType, callback: callback, target: targetVar }); if (eventType === 'complete') { console.log('HTTP Event listener registered for:', eventType); } })();`"
     }
   ]
 }
