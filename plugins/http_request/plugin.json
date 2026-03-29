@@ -1,8 +1,8 @@
 {
   "id": "http_request",
   "name": "HTTP Request",
-  "version": "2.0.2",
-  "description": "Complete HTTP client with GET, POST, PUT, PATCH, DELETE and response event blocks",
+  "version": "2.0.3",
+  "description": "Complete HTTP client with events system - GET, POST, PUT, PATCH, DELETE with event listeners",
   "blocks": [
     {
       "type": "http_get",
@@ -34,7 +34,7 @@
         }
       ],
       "allowChildren": false,
-      "exportCode": "`(function() { const url = '${b.getValue('url')}'; let headersObj = {}; try { headersObj = ${b.getValue('headers')}; } catch(e) { console.error('Invalid headers:', e); } fetch(url, { method: 'GET', headers: headersObj }).then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }).then(data => { window['${b.getValue('target')}'] = data; }).catch(e => console.error('HTTP GET failed:', e)); })();`"
+      "exportCode": "`(function() { const url = '${b.getValue('url')}'; const target = '${b.getValue('target')}'; let headersObj = {}; try { headersObj = ${b.getValue('headers')}; } catch(e) { console.error('Invalid headers:', e); } const requestId = Date.now() + '-' + Math.random(); const eventData = { id: requestId, type: 'http_get', url: url, status: 'start', timestamp: Date.now() }; window.__dispatchHttpEvent = window.__dispatchHttpEvent || function(event) { if (window.__httpEventListeners) { window.__httpEventListeners.forEach(listener => { try { if (listener.type === event.type || listener.type === 'onAny') { listener.handler(event); } } catch(e) { console.error('Event listener error:', e); } }); } }; window.__dispatchHttpEvent({ ...eventData, type: 'onRequestStart' }); fetch(url, { method: 'GET', headers: headersObj }).then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }).then(data => { window[target] = data; window.__dispatchHttpEvent({ ...eventData, type: 'onResponse', status: 'success', data: data, target: target }); window.__dispatchHttpEvent({ ...eventData, type: 'onComplete', status: 'success', data: data }); }).catch(e => { console.error('HTTP GET failed:', e); window.__dispatchHttpEvent({ ...eventData, type: 'onError', status: 'error', error: e.message }); window.__dispatchHttpEvent({ ...eventData, type: 'onComplete', status: 'error', error: e.message }); }); })();`"
     },
     {
       "type": "http_post",
@@ -73,7 +73,7 @@
         }
       ],
       "allowChildren": false,
-      "exportCode": "`(function() { const url = '${b.getValue('url')}'; let headersObj = {}; let bodyObj = ${b.getValue('body')}; try { headersObj = ${b.getValue('headers')}; } catch(e) { console.error('Invalid headers:', e); } fetch(url, { method: 'POST', headers: headersObj, body: JSON.stringify(bodyObj) }).then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }).then(data => { window['${b.getValue('target')}'] = data; }).catch(e => console.error('HTTP POST failed:', e)); })();`"
+      "exportCode": "`(function() { const url = '${b.getValue('url')}'; const target = '${b.getValue('target')}'; let headersObj = {}; let bodyObj = ${b.getValue('body')}; try { headersObj = ${b.getValue('headers')}; } catch(e) { console.error('Invalid headers:', e); } const requestId = Date.now() + '-' + Math.random(); const eventData = { id: requestId, type: 'http_post', url: url, body: bodyObj, status: 'start', timestamp: Date.now() }; window.__dispatchHttpEvent = window.__dispatchHttpEvent || function(event) { if (window.__httpEventListeners) { window.__httpEventListeners.forEach(listener => { try { if (listener.type === event.type || listener.type === 'onAny') { listener.handler(event); } } catch(e) { console.error('Event listener error:', e); } }); } }; window.__dispatchHttpEvent({ ...eventData, type: 'onRequestStart' }); fetch(url, { method: 'POST', headers: headersObj, body: JSON.stringify(bodyObj) }).then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }).then(data => { window[target] = data; window.__dispatchHttpEvent({ ...eventData, type: 'onResponse', status: 'success', data: data, target: target }); window.__dispatchHttpEvent({ ...eventData, type: 'onComplete', status: 'success', data: data }); }).catch(e => { console.error('HTTP POST failed:', e); window.__dispatchHttpEvent({ ...eventData, type: 'onError', status: 'error', error: e.message }); window.__dispatchHttpEvent({ ...eventData, type: 'onComplete', status: 'error', error: e.message }); }); })();`"
     },
     {
       "type": "http_put",
@@ -112,7 +112,7 @@
         }
       ],
       "allowChildren": false,
-      "exportCode": "`(function() { const url = '${b.getValue('url')}'; let headersObj = {}; let bodyObj = ${b.getValue('body')}; try { headersObj = ${b.getValue('headers')}; } catch(e) { console.error('Invalid headers:', e); } fetch(url, { method: 'PUT', headers: headersObj, body: JSON.stringify(bodyObj) }).then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }).then(data => { window['${b.getValue('target')}'] = data; }).catch(e => console.error('HTTP PUT failed:', e)); })();`"
+      "exportCode": "`(function() { const url = '${b.getValue('url')}'; const target = '${b.getValue('target')}'; let headersObj = {}; let bodyObj = ${b.getValue('body')}; try { headersObj = ${b.getValue('headers')}; } catch(e) { console.error('Invalid headers:', e); } const requestId = Date.now() + '-' + Math.random(); const eventData = { id: requestId, type: 'http_put', url: url, body: bodyObj, status: 'start', timestamp: Date.now() }; window.__dispatchHttpEvent = window.__dispatchHttpEvent || function(event) { if (window.__httpEventListeners) { window.__httpEventListeners.forEach(listener => { try { if (listener.type === event.type || listener.type === 'onAny') { listener.handler(event); } } catch(e) { console.error('Event listener error:', e); } }); } }; window.__dispatchHttpEvent({ ...eventData, type: 'onRequestStart' }); fetch(url, { method: 'PUT', headers: headersObj, body: JSON.stringify(bodyObj) }).then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }).then(data => { window[target] = data; window.__dispatchHttpEvent({ ...eventData, type: 'onResponse', status: 'success', data: data, target: target }); window.__dispatchHttpEvent({ ...eventData, type: 'onComplete', status: 'success', data: data }); }).catch(e => { console.error('HTTP PUT failed:', e); window.__dispatchHttpEvent({ ...eventData, type: 'onError', status: 'error', error: e.message }); window.__dispatchHttpEvent({ ...eventData, type: 'onComplete', status: 'error', error: e.message }); }); })();`"
     },
     {
       "type": "http_patch",
@@ -151,7 +151,7 @@
         }
       ],
       "allowChildren": false,
-      "exportCode": "`(function() { const url = '${b.getValue('url')}'; let headersObj = {}; let bodyObj = ${b.getValue('body')}; try { headersObj = ${b.getValue('headers')}; } catch(e) { console.error('Invalid headers:', e); } fetch(url, { method: 'PATCH', headers: headersObj, body: JSON.stringify(bodyObj) }).then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }).then(data => { window['${b.getValue('target')}'] = data; }).catch(e => console.error('HTTP PATCH failed:', e)); })();`"
+      "exportCode": "`(function() { const url = '${b.getValue('url')}'; const target = '${b.getValue('target')}'; let headersObj = {}; let bodyObj = ${b.getValue('body')}; try { headersObj = ${b.getValue('headers')}; } catch(e) { console.error('Invalid headers:', e); } const requestId = Date.now() + '-' + Math.random(); const eventData = { id: requestId, type: 'http_patch', url: url, body: bodyObj, status: 'start', timestamp: Date.now() }; window.__dispatchHttpEvent = window.__dispatchHttpEvent || function(event) { if (window.__httpEventListeners) { window.__httpEventListeners.forEach(listener => { try { if (listener.type === event.type || listener.type === 'onAny') { listener.handler(event); } } catch(e) { console.error('Event listener error:', e); } }); } }; window.__dispatchHttpEvent({ ...eventData, type: 'onRequestStart' }); fetch(url, { method: 'PATCH', headers: headersObj, body: JSON.stringify(bodyObj) }).then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }).then(data => { window[target] = data; window.__dispatchHttpEvent({ ...eventData, type: 'onResponse', status: 'success', data: data, target: target }); window.__dispatchHttpEvent({ ...eventData, type: 'onComplete', status: 'success', data: data }); }).catch(e => { console.error('HTTP PATCH failed:', e); window.__dispatchHttpEvent({ ...eventData, type: 'onError', status: 'error', error: e.message }); window.__dispatchHttpEvent({ ...eventData, type: 'onComplete', status: 'error', error: e.message }); }); })();`"
     },
     {
       "type": "http_delete",
@@ -182,7 +182,7 @@
         }
       ],
       "allowChildren": false,
-      "exportCode": "`(function() { const url = '${b.getValue('url')}'; let headersObj = {}; try { headersObj = ${b.getValue('headers')}; } catch(e) { console.error('Invalid headers:', e); } fetch(url, { method: 'DELETE', headers: headersObj }).then(r => { if (!r.ok && r.status !== 204) throw new Error('HTTP ' + r.status); return r.status === 204 ? {} : r.json(); }).then(data => { window['${b.getValue('target')}'] = data; }).catch(e => console.error('HTTP DELETE failed:', e)); })();`"
+      "exportCode": "`(function() { const url = '${b.getValue('url')}'; const target = '${b.getValue('target')}'; let headersObj = {}; try { headersObj = ${b.getValue('headers')}; } catch(e) { console.error('Invalid headers:', e); } const requestId = Date.now() + '-' + Math.random(); const eventData = { id: requestId, type: 'http_delete', url: url, status: 'start', timestamp: Date.now() }; window.__dispatchHttpEvent = window.__dispatchHttpEvent || function(event) { if (window.__httpEventListeners) { window.__httpEventListeners.forEach(listener => { try { if (listener.type === event.type || listener.type === 'onAny') { listener.handler(event); } } catch(e) { console.error('Event listener error:', e); } }); } }; window.__dispatchHttpEvent({ ...eventData, type: 'onRequestStart' }); fetch(url, { method: 'DELETE', headers: headersObj }).then(r => { if (!r.ok && r.status !== 204) throw new Error('HTTP ' + r.status); const data = r.status === 204 ? { deleted: true, status: 204 } : r.json(); return data; }).then(data => { window[target] = data; window.__dispatchHttpEvent({ ...eventData, type: 'onResponse', status: 'success', data: data, target: target }); window.__dispatchHttpEvent({ ...eventData, type: 'onComplete', status: 'success', data: data }); }).catch(e => { console.error('HTTP DELETE failed:', e); window.__dispatchHttpEvent({ ...eventData, type: 'onError', status: 'error', error: e.message }); window.__dispatchHttpEvent({ ...eventData, type: 'onComplete', status: 'error', error: e.message }); }); })();`"
     },
     {
       "type": "http_event_listener",
@@ -194,7 +194,7 @@
           "name": "eventType",
           "label": "Event Type",
           "type": "select",
-          "options": ["onRequestStart", "onResponse", "onError", "onComplete"],
+          "options": ["onRequestStart", "onResponse", "onError", "onComplete", "onAny"],
           "default": "onResponse",
           "span": "full"
         },
@@ -208,15 +208,16 @@
         },
         {
           "name": "targetVar",
-          "label": "Store response in",
+          "label": "Store event data in",
           "type": "text",
-          "default": "eventData",
-          "placeholder": "eventData"
+          "default": "httpEvent",
+          "placeholder": "httpEvent"
         }
       ],
       "allowChildren": true,
       "extraChildZones": ["handlerBlocks"],
-      "exportCode": "`(function() { const eventType = '${b.getValue('eventType')}'; const urlPattern = '${b.getValue('urlPattern')}'; const targetVar = '${b.getValue('targetVar')}'; const handler = function(data) { window[targetVar] = data; }; window.__httpEventListeners = window.__httpEventListeners || []; window.__httpEventListeners.push({ type: eventType, pattern: urlPattern, target: targetVar, handler: handler }); })();`"
+      "scopeVars": "(b) => [{ name: b.getValue('targetVar') || 'httpEvent', range: 'event handler', color: '#aa88ff', desc: `Event data from HTTP request - contains type, url, status, data/error` }]",
+      "exportCode": "`(function() { const eventType = '${b.getValue('eventType')}'; const urlPattern = '${b.getValue('urlPattern')}'; const targetVar = '${b.getValue('targetVar')}'; const handler = function(eventData) { window[targetVar] = eventData; const matchesPattern = urlPattern === '*' || eventData.url.includes(urlPattern.replace('*', '')); if (matchesPattern) { ${(b.handlerBlocks || []).map(child => child.export?.javascript ? child.export.javascript(child) : '').join(';\\n')} } }; window.__httpEventListeners = window.__httpEventListeners || []; window.__httpEventListeners.push({ type: eventType, pattern: urlPattern, target: targetVar, handler: handler }); })();`"
     }
   ]
 }
