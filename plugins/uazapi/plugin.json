@@ -1,7 +1,7 @@
 {
   "id": "uazapi",
   "name": "UazAPI WhatsApp",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Integração com WhatsApp via UazAPI",
   "author": "NoCodeFlow",
   "license": "MIT",
@@ -19,7 +19,7 @@
         { "name": "target", "label": "Store in", "type": "text", "default": "waResult" }
       ],
       "allowChildren": false,
-      "exportCode": "function(b) { const serverUrl = String(b.getValue('serverUrl') || ''); const token = String(b.getValue('token') || ''); const number = String(b.getValue('number') || ''); const text = String(b.getValue('text') || ''); const target = String(b.getValue('target') || 'waResult'); return `const ${target} = await (async () => { try { const r = await fetch('${serverUrl}/send/text', { method: 'POST', headers: { 'Accept': 'application/json', 'Content-Type': 'application/json', 'token': '${token}' }, body: JSON.stringify({ number: '${number}', text: ${JSON.stringify(text)} }) }); const d = await r.json(); if(window.__addLog) window.__addLog('WA sent to ${number}', 'info'); return d; } catch(e) { if(window.__addLog) window.__addLog('WA error: ' + e.message, 'error'); return { error: e.message }; } })();`; }"
+      "exportCode": "function(b) { const serverUrl = (typeof b.getValue('serverUrl') === 'string' ? b.getValue('serverUrl') : String(b.getValue('serverUrl') || '')); const token = (typeof b.getValue('token') === 'string' ? b.getValue('token') : String(b.getValue('token') || '')); const number = (typeof b.getValue('number') === 'string' ? b.getValue('number') : String(b.getValue('number') || '')); const text = (typeof b.getValue('text') === 'string' ? b.getValue('text') : String(b.getValue('text') || '')); const target = (typeof b.getValue('target') === 'string' ? b.getValue('target') : String(b.getValue('target') || 'waResult')); return `const ${target} = await (async () => { try { const r = await fetch('${serverUrl}/send/text', { method: 'POST', headers: { 'Accept': 'application/json', 'Content-Type': 'application/json', 'token': '${token}' }, body: JSON.stringify({ number: '${number}', text: ${JSON.stringify(text)} }) }); const d = await r.json(); if(window.__addLog) window.__addLog('WA sent to ${number}', 'info'); return d; } catch(e) { if(window.__addLog) window.__addLog('WA error: ' + e.message, 'error'); return { error: e.message }; } })();`; }"
     },
     {
       "type": "uazapi_send_image",
@@ -35,7 +35,57 @@
         { "name": "target", "label": "Store in", "type": "text", "default": "waResult" }
       ],
       "allowChildren": false,
-      "exportCode": "function(b) { const serverUrl = String(b.getValue('serverUrl') || ''); const token = String(b.getValue('token') || ''); const number = String(b.getValue('number') || ''); const imageUrl = String(b.getValue('imageUrl') || ''); const caption = String(b.getValue('caption') || ''); const target = String(b.getValue('target') || 'waResult'); return `const ${target} = await (async () => { try { const r = await fetch('${serverUrl}/send/image', { method: 'POST', headers: { 'Accept': 'application/json', 'Content-Type': 'application/json', 'token': '${token}' }, body: JSON.stringify({ number: '${number}', url: ${JSON.stringify(imageUrl)}, caption: ${JSON.stringify(caption)} }) }); const d = await r.json(); if(window.__addLog) window.__addLog('WA image sent to ${number}', 'info'); return d; } catch(e) { if(window.__addLog) window.__addLog('WA error: ' + e.message, 'error'); return { error: e.message }; } })();`; }"
+      "exportCode": "function(b) { const serverUrl = (typeof b.getValue('serverUrl') === 'string' ? b.getValue('serverUrl') : String(b.getValue('serverUrl') || '')); const token = (typeof b.getValue('token') === 'string' ? b.getValue('token') : String(b.getValue('token') || '')); const number = (typeof b.getValue('number') === 'string' ? b.getValue('number') : String(b.getValue('number') || '')); const imageUrl = (typeof b.getValue('imageUrl') === 'string' ? b.getValue('imageUrl') : String(b.getValue('imageUrl') || '')); const caption = (typeof b.getValue('caption') === 'string' ? b.getValue('caption') : String(b.getValue('caption') || '')); const target = (typeof b.getValue('target') === 'string' ? b.getValue('target') : String(b.getValue('target') || 'waResult')); return `const ${target} = await (async () => { try { const r = await fetch('${serverUrl}/send/image', { method: 'POST', headers: { 'Accept': 'application/json', 'Content-Type': 'application/json', 'token': '${token}' }, body: JSON.stringify({ number: '${number}', url: ${JSON.stringify(imageUrl)}, caption: ${JSON.stringify(caption)} }) }); const d = await r.json(); if(window.__addLog) window.__addLog('WA image sent to ${number}', 'info'); return d; } catch(e) { if(window.__addLog) window.__addLog('WA error: ' + e.message, 'error'); return { error: e.message }; } })();`; }"
+    },
+    {
+      "type": "uazapi_send_document",
+      "name": "Send WhatsApp Document",
+      "icon": "description",
+      "color": "#25D366",
+      "fields": [
+        { "name": "serverUrl", "label": "Server URL", "type": "text", "default": "https://api.uazapi.com", "required": true, "span": "full" },
+        { "name": "token", "label": "Token", "type": "text", "default": "YOUR_TOKEN", "required": true, "span": "full" },
+        { "name": "number", "label": "Phone Number", "type": "text", "default": "5511999999999", "required": true },
+        { "name": "documentUrl", "label": "Document URL", "type": "text", "default": "https://example.com/document.pdf", "required": true, "span": "full" },
+        { "name": "filename", "label": "File Name", "type": "text", "default": "document.pdf" },
+        { "name": "caption", "label": "Caption", "type": "text", "default": "" },
+        { "name": "target", "label": "Store in", "type": "text", "default": "waResult" }
+      ],
+      "allowChildren": false,
+      "exportCode": "function(b) { const serverUrl = (typeof b.getValue('serverUrl') === 'string' ? b.getValue('serverUrl') : String(b.getValue('serverUrl') || '')); const token = (typeof b.getValue('token') === 'string' ? b.getValue('token') : String(b.getValue('token') || '')); const number = (typeof b.getValue('number') === 'string' ? b.getValue('number') : String(b.getValue('number') || '')); const documentUrl = (typeof b.getValue('documentUrl') === 'string' ? b.getValue('documentUrl') : String(b.getValue('documentUrl') || '')); const filename = (typeof b.getValue('filename') === 'string' ? b.getValue('filename') : String(b.getValue('filename') || '')); const caption = (typeof b.getValue('caption') === 'string' ? b.getValue('caption') : String(b.getValue('caption') || '')); const target = (typeof b.getValue('target') === 'string' ? b.getValue('target') : String(b.getValue('target') || 'waResult')); return `const ${target} = await (async () => { try { const r = await fetch('${serverUrl}/send/document', { method: 'POST', headers: { 'Accept': 'application/json', 'Content-Type': 'application/json', 'token': '${token}' }, body: JSON.stringify({ number: '${number}', url: ${JSON.stringify(documentUrl)}, filename: ${JSON.stringify(filename)}, caption: ${JSON.stringify(caption)} }) }); const d = await r.json(); if(window.__addLog) window.__addLog('WA document sent to ${number}', 'info'); return d; } catch(e) { if(window.__addLog) window.__addLog('WA error: ' + e.message, 'error'); return { error: e.message }; } })();`; }"
+    },
+    {
+      "type": "uazapi_send_button",
+      "name": "Send WhatsApp Button",
+      "icon": "touch_app",
+      "color": "#25D366",
+      "fields": [
+        { "name": "serverUrl", "label": "Server URL", "type": "text", "default": "https://api.uazapi.com", "required": true, "span": "full" },
+        { "name": "token", "label": "Token", "type": "text", "default": "YOUR_TOKEN", "required": true, "span": "full" },
+        { "name": "number", "label": "Phone Number", "type": "text", "default": "5511999999999", "required": true },
+        { "name": "text", "label": "Message", "type": "textarea", "default": "Choose an option:", "required": true, "span": "full" },
+        { "name": "buttons", "label": "Buttons (JSON)", "type": "textarea", "default": "[{\"text\":\"Option 1\"},{\"text\":\"Option 2\"}]", "span": "full" },
+        { "name": "target", "label": "Store in", "type": "text", "default": "waResult" }
+      ],
+      "allowChildren": false,
+      "exportCode": "function(b) { const serverUrl = (typeof b.getValue('serverUrl') === 'string' ? b.getValue('serverUrl') : String(b.getValue('serverUrl') || '')); const token = (typeof b.getValue('token') === 'string' ? b.getValue('token') : String(b.getValue('token') || '')); const number = (typeof b.getValue('number') === 'string' ? b.getValue('number') : String(b.getValue('number') || '')); const text = (typeof b.getValue('text') === 'string' ? b.getValue('text') : String(b.getValue('text') || '')); const buttons = b.getValue('buttons'); const target = (typeof b.getValue('target') === 'string' ? b.getValue('target') : String(b.getValue('target') || 'waResult')); return `const ${target} = await (async () => { try { const r = await fetch('${serverUrl}/send/button', { method: 'POST', headers: { 'Accept': 'application/json', 'Content-Type': 'application/json', 'token': '${token}' }, body: JSON.stringify({ number: '${number}', text: ${JSON.stringify(text)}, buttons: ${buttons} }) }); const d = await r.json(); if(window.__addLog) window.__addLog('WA button sent to ${number}', 'info'); return d; } catch(e) { if(window.__addLog) window.__addLog('WA error: ' + e.message, 'error'); return { error: e.message }; } })();`; }"
+    },
+    {
+      "type": "uazapi_send_list",
+      "name": "Send WhatsApp List",
+      "icon": "list",
+      "color": "#25D366",
+      "fields": [
+        { "name": "serverUrl", "label": "Server URL", "type": "text", "default": "https://api.uazapi.com", "required": true, "span": "full" },
+        { "name": "token", "label": "Token", "type": "text", "default": "YOUR_TOKEN", "required": true, "span": "full" },
+        { "name": "number", "label": "Phone Number", "type": "text", "default": "5511999999999", "required": true },
+        { "name": "title", "label": "Title", "type": "text", "default": "Select an option" },
+        { "name": "description", "label": "Description", "type": "text", "default": "Choose below:" },
+        { "name": "sections", "label": "Sections (JSON)", "type": "textarea", "default": "[{\"title\":\"Section 1\",\"rows\":[{\"id\":\"1\",\"title\":\"Option 1\",\"description\":\"Description 1\"}]}]", "span": "full" },
+        { "name": "target", "label": "Store in", "type": "text", "default": "waResult" }
+      ],
+      "allowChildren": false,
+      "exportCode": "function(b) { const serverUrl = (typeof b.getValue('serverUrl') === 'string' ? b.getValue('serverUrl') : String(b.getValue('serverUrl') || '')); const token = (typeof b.getValue('token') === 'string' ? b.getValue('token') : String(b.getValue('token') || '')); const number = (typeof b.getValue('number') === 'string' ? b.getValue('number') : String(b.getValue('number') || '')); const title = (typeof b.getValue('title') === 'string' ? b.getValue('title') : String(b.getValue('title') || '')); const description = (typeof b.getValue('description') === 'string' ? b.getValue('description') : String(b.getValue('description') || '')); const sections = b.getValue('sections'); const target = (typeof b.getValue('target') === 'string' ? b.getValue('target') : String(b.getValue('target') || 'waResult')); return `const ${target} = await (async () => { try { const r = await fetch('${serverUrl}/send/list', { method: 'POST', headers: { 'Accept': 'application/json', 'Content-Type': 'application/json', 'token': '${token}' }, body: JSON.stringify({ number: '${number}', title: ${JSON.stringify(title)}, description: ${JSON.stringify(description)}, sections: ${sections} }) }); const d = await r.json(); if(window.__addLog) window.__addLog('WA list sent to ${number}', 'info'); return d; } catch(e) { if(window.__addLog) window.__addLog('WA error: ' + e.message, 'error'); return { error: e.message }; } })();`; }"
     },
     {
       "type": "uazapi_get_status",
@@ -48,7 +98,7 @@
         { "name": "target", "label": "Store in", "type": "text", "default": "waStatus" }
       ],
       "allowChildren": false,
-      "exportCode": "function(b) { const serverUrl = String(b.getValue('serverUrl') || ''); const token = String(b.getValue('token') || ''); const target = String(b.getValue('target') || 'waStatus'); return `const ${target} = await (async () => { try { const r = await fetch('${serverUrl}/status', { method: 'GET', headers: { 'Accept': 'application/json', 'token': '${token}' } }); const d = await r.json(); if(window.__addLog) window.__addLog('WA status: ' + JSON.stringify(d), 'info'); return d; } catch(e) { if(window.__addLog) window.__addLog('WA error: ' + e.message, 'error'); return { error: e.message }; } })();`; }"
+      "exportCode": "function(b) { const serverUrl = (typeof b.getValue('serverUrl') === 'string' ? b.getValue('serverUrl') : String(b.getValue('serverUrl') || '')); const token = (typeof b.getValue('token') === 'string' ? b.getValue('token') : String(b.getValue('token') || '')); const target = (typeof b.getValue('target') === 'string' ? b.getValue('target') : String(b.getValue('target') || 'waStatus')); return `const ${target} = await (async () => { try { const r = await fetch('${serverUrl}/status', { method: 'GET', headers: { 'Accept': 'application/json', 'token': '${token}' } }); const d = await r.json(); if(window.__addLog) window.__addLog('WA status: ' + JSON.stringify(d), 'info'); return d; } catch(e) { if(window.__addLog) window.__addLog('WA error: ' + e.message, 'error'); return { error: e.message }; } })();`; }"
     },
     {
       "type": "uazapi_get_qr",
@@ -61,7 +111,7 @@
         { "name": "target", "label": "Store in", "type": "text", "default": "waQr" }
       ],
       "allowChildren": false,
-      "exportCode": "function(b) { const serverUrl = String(b.getValue('serverUrl') || ''); const token = String(b.getValue('token') || ''); const target = String(b.getValue('target') || 'waQr'); return `const ${target} = await (async () => { try { const r = await fetch('${serverUrl}/qr', { method: 'GET', headers: { 'Accept': 'application/json', 'token': '${token}' } }); const d = await r.json(); if(window.__addLog) window.__addLog('QR retrieved', 'info'); return d; } catch(e) { if(window.__addLog) window.__addLog('WA error: ' + e.message, 'error'); return { error: e.message }; } })();`; }"
+      "exportCode": "function(b) { const serverUrl = (typeof b.getValue('serverUrl') === 'string' ? b.getValue('serverUrl') : String(b.getValue('serverUrl') || '')); const token = (typeof b.getValue('token') === 'string' ? b.getValue('token') : String(b.getValue('token') || '')); const target = (typeof b.getValue('target') === 'string' ? b.getValue('target') : String(b.getValue('target') || 'waQr')); return `const ${target} = await (async () => { try { const r = await fetch('${serverUrl}/qr', { method: 'GET', headers: { 'Accept': 'application/json', 'token': '${token}' } }); const d = await r.json(); if(window.__addLog) window.__addLog('QR retrieved', 'info'); return d; } catch(e) { if(window.__addLog) window.__addLog('WA error: ' + e.message, 'error'); return { error: e.message }; } })();`; }"
     },
     {
       "type": "uazapi_logout",
@@ -74,7 +124,7 @@
         { "name": "target", "label": "Store in", "type": "text", "default": "waLogout" }
       ],
       "allowChildren": false,
-      "exportCode": "function(b) { const serverUrl = String(b.getValue('serverUrl') || ''); const token = String(b.getValue('token') || ''); const target = String(b.getValue('target') || 'waLogout'); return `const ${target} = await (async () => { try { const r = await fetch('${serverUrl}/logout', { method: 'POST', headers: { 'Accept': 'application/json', 'Content-Type': 'application/json', 'token': '${token}' } }); const d = await r.json(); if(window.__addLog) window.__addLog('WA logged out', 'info'); return d; } catch(e) { if(window.__addLog) window.__addLog('WA error: ' + e.message, 'error'); return { error: e.message }; } })();`; }"
+      "exportCode": "function(b) { const serverUrl = (typeof b.getValue('serverUrl') === 'string' ? b.getValue('serverUrl') : String(b.getValue('serverUrl') || '')); const token = (typeof b.getValue('token') === 'string' ? b.getValue('token') : String(b.getValue('token') || '')); const target = (typeof b.getValue('target') === 'string' ? b.getValue('target') : String(b.getValue('target') || 'waLogout')); return `const ${target} = await (async () => { try { const r = await fetch('${serverUrl}/logout', { method: 'POST', headers: { 'Accept': 'application/json', 'Content-Type': 'application/json', 'token': '${token}' } }); const d = await r.json(); if(window.__addLog) window.__addLog('WA logged out', 'info'); return d; } catch(e) { if(window.__addLog) window.__addLog('WA error: ' + e.message, 'error'); return { error: e.message }; } })();`; }"
     }
   ]
 }
